@@ -25,9 +25,12 @@ static NSMutableArray *arrayOfAllocatedTours;
         [self setUserInteractionEnabled:NO];
         
     }
+    tourVisible = YES;
     if(arrayOfAllocatedTours==nil)
         arrayOfAllocatedTours = [[NSMutableArray alloc]init];
     [arrayOfAllocatedTours addObject:self];
+    [self setUserInteractionEnabled:YES];
+    [self prepareGestureRecognizers];
     return self;
 }
 
@@ -50,7 +53,11 @@ static NSMutableArray *arrayOfAllocatedTours;
 -(void)setVisible:(bool)visible
 {
     tourVisible=visible;
-    [self refreshBubblesVisibility];
+    [self refreshBubblesVisibility:^(BOOL finished) {
+        if (visible == NO) {
+            [self removeFromSuperview];
+        }
+    }];
 }
 
 -(BOOL)isVisible
@@ -58,7 +65,7 @@ static NSMutableArray *arrayOfAllocatedTours;
     return tourVisible;
 }
 
--(void)makeDismissAnimation:(CRBubble*)bubble;
+-(void)makeDismissAnimation:(CRBubble*)bubble completion:(void (^)(BOOL finished))completion
 {
     if(activeAnimation)
     {
@@ -92,7 +99,7 @@ static NSMutableArray *arrayOfAllocatedTours;
                              scaleDown2.fromValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.15, 1.15, 1.15)];
                              scaleDown2.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1, 1, 1)];
                              [bubble.attachedView.layer addAnimation:scaleDown2 forKey:nil];
-                             
+                             completion(YES);
                              
                          }];
     }
@@ -117,7 +124,7 @@ static NSMutableArray *arrayOfAllocatedTours;
     [UIView commitAnimations];
 }
 
--(void) refreshBubblesVisibility
+-(void) refreshBubblesVisibility:(void (^)(BOOL finished))completion
 {
     for(CRProductTour *tour in arrayOfAllocatedTours)
     {
@@ -133,11 +140,27 @@ static NSMutableArray *arrayOfAllocatedTours;
             else
             {
                 
-                [self makeDismissAnimation:bubble];
+                [self makeDismissAnimation:bubble completion:^(BOOL finished) {
+                    completion(YES);
+                }];
                 
             }
         }
     }
+}
+
+- (void)dismissAllBubbles
+{
+    [self setVisible:NO];
+}
+
+#pragma mark - Gestures
+
+- (void)prepareGestureRecognizers
+{
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissAllBubbles)];
+    [tapGestureRecognizer setNumberOfTouchesRequired:1];
+    [self addGestureRecognizer:tapGestureRecognizer];
 }
 
 -(void)dealloc

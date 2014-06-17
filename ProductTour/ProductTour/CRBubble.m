@@ -58,27 +58,30 @@
     if (!self.title || [self.title isEqualToString:@""])
         actualYPosition = [self offsets].height;
     
+    if (self) {
+        stringArray=[self.description componentsSeparatedByString:@"\n"];
     
-    stringArray=[self.description componentsSeparatedByString:@"\n"];
     
-    for (NSString *descriptionLine in stringArray) {
         
-        if (self.title && ![self.title isEqualToString:@""])
-            actualYPosition+=actualHeight;
-        
-        actualWidth =self.frame.size.width;
-        actualHeight =CR_DESCRIPTION_FONT_SIZE;
-        
-        UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(actualXPosition, actualYPosition, actualWidth, actualHeight+CR_ARROW_SPACE)];
-        [descriptionLabel setTextColor:COLOR_DARK_GRAY];
-        [descriptionLabel setFont:[UIFont systemFontOfSize:CR_DESCRIPTION_FONT_SIZE]];
-        [descriptionLabel setText:descriptionLine];
-        [descriptionLabel setBackgroundColor:[UIColor clearColor]];
-        [self addSubview:descriptionLabel];
-        
-        if (!self.title || [self.title isEqualToString:@""])
-            actualYPosition+=actualHeight;
-        
+        for (NSString *descriptionLine in stringArray) {
+            
+            if (self.title && ![self.title isEqualToString:@""])
+                actualYPosition+=actualHeight;
+            
+            actualWidth =self.frame.size.width;
+            actualHeight =CR_DESCRIPTION_FONT_SIZE;
+            
+            UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(actualXPosition, actualYPosition, actualWidth, actualHeight+CR_ARROW_SPACE)];
+            [descriptionLabel setTextColor:COLOR_DARK_GRAY];
+            [descriptionLabel setFont:[UIFont systemFontOfSize:CR_DESCRIPTION_FONT_SIZE]];
+            [descriptionLabel setText:descriptionLine];
+            [descriptionLabel setBackgroundColor:[UIColor clearColor]];
+            [self addSubview:descriptionLabel];
+            
+            if (!self.title || [self.title isEqualToString:@""])
+                actualYPosition+=actualHeight;
+            
+        }
     }
     
     if(SHOW_ZONE){

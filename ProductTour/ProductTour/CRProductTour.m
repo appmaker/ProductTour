@@ -28,7 +28,10 @@ static NSMutableArray *arrayOfAllocatedTours;
     tourVisible = YES;
     if(arrayOfAllocatedTours==nil)
         arrayOfAllocatedTours = [[NSMutableArray alloc]init];
-    [arrayOfAllocatedTours addObject:self];
+    if (self != nil) {
+        [arrayOfAllocatedTours addObject:self];
+    }
+    
     [self setUserInteractionEnabled:YES];
     [self prepareGestureRecognizers];
     return self;

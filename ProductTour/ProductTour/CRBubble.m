@@ -59,7 +59,7 @@
         actualYPosition = [self offsets].height;
     
     if (self) {
-        stringArray=[self.description componentsSeparatedByString:@"\n"];
+        stringArray=[self.bubbleDescription componentsSeparatedByString:@"\n"];
     
     
         
